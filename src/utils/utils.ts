@@ -1,3 +1,5 @@
+import { FormErrors } from '../types';
+
 export function pascalToKebab(value: string): string {
     return value.replace(/([a-z0–9])([A-Z])/g, "$1-$2").toLowerCase();
 }
@@ -132,4 +134,24 @@ export function createElement<
         }
     }
     return element;
+}
+
+export function formatNumber(value: number | null): string {
+  if (value === null) {
+    return 'Бесценно';
+  }
+  return value.toLocaleString();
+}
+
+export function getWordForm(count: number): string {
+  const lastDigit = count % 10;
+  const lastTwoDigits = count % 100;
+
+  if (lastDigit === 1 && lastTwoDigits !== 11) {
+    return 'синапс';
+  } else if (lastDigit >= 2 && lastDigit <= 4 && (lastTwoDigits < 10 || lastTwoDigits >= 20)) {
+    return 'синапса';
+  } else {
+    return 'синапсов';
+  }
 }
