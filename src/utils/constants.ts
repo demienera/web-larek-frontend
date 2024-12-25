@@ -1,6 +1,5 @@
 import { EventEmitter } from '../components/base/events';
 import { AppData } from '../components/model/AppData';
-import { Presenter } from '../components/Presenter';
 import { ProductApi } from '../components/ProductApi';
 import { Basket } from '../components/view/Basket';
 import { ContactsForm } from '../components/view/ContactsForm';
@@ -14,7 +13,6 @@ export const CDN_URL = `${process.env.API_ORIGIN}/content/weblarek`;
 
 export const api = new ProductApi(CDN_URL, API_URL);
 export const events = new EventEmitter();
-export const presenter = new Presenter(events, api);
 export const appData = new AppData({}, events);
 
 export const catalogTemplate = ensureElement<HTMLTemplateElement>('#card-catalog');

@@ -85,11 +85,11 @@ export class ProductView extends Component<IProductView> {
     return value.includes(id) ? 'Убрать из корзины' : 'В корзину'
   }
 
-  setButtonState(button: HTMLButtonElement, price: number | null): void {
+  setButtonState(price: number | null): void {
     if (price === null) {
-      button.disabled = true;
+      this.setDisable(this._button, true)
     } else {
-      button.disabled = false;
+      this.setDisable(this._button, false)
     }
   }
 }

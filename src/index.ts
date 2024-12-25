@@ -5,7 +5,7 @@ import { Success } from './components/view/Success';
 import './scss/styles.scss';
 import { AppEvents, CatalogUpdateEvent, IOrder, IProductView, Payment } from './types';
 import { cloneTemplate } from './utils/utils';
-import { events, api, presenter, appData,
+import { events, api, appData,
   catalogTemplate, productPreviewTemplate,
   basketItemTemplate, successTemplate, modal,
   page, basket, deliveryForm, contactsForm} from './utils/constants';
@@ -13,10 +13,6 @@ import { events, api, presenter, appData,
 events.onAll(({ eventName, data }) => {
   console.log(eventName, data);
 })
-
-events.on(AppEvents.CATALOG_CHANGED, async () => {
-  await presenter.loadProducts();
-});
 
 events.on<CatalogUpdateEvent>(AppEvents.CATALOG_CHANGED, ({ catalog }) => {
   page.catalog = catalog.map((item) => {
@@ -39,8 +35,8 @@ events.on(AppEvents.PRODUCT_SELECT, (item: Product) => {
   appData.setPreview(item);
 });
 
-events.on(AppEvents.VIEW_PRODUCT, async (item: Product) => {
-  await presenter.loadProductById(item.id);
+events.on(AppEvents.VIEW_PRODUCT, (item: Product) => {
+  api.getProductItem(item.id);
   const basketItemIds = appData.listBasketItemIds() || [];
 
   const product = new ProductView(cloneTemplate(productPreviewTemplate), events, {
@@ -59,11 +55,7 @@ events.on(AppEvents.VIEW_PRODUCT, async (item: Product) => {
     button: product.setButtonText(item.id, basketItemIds),
   });
 
-  const button = renderedCard.querySelector('.card__button') as HTMLButtonElement;
-
-  if (button) {
-    product.setButtonState(button, item.price);
-  }
+  product.setButtonState(item.price);
 
   modal.render({
     content: renderedCard,
@@ -126,6 +118,9 @@ events.on(AppEvents.PAYMENT_CHANGE, (data: { payment: string }) => {
 });
 
 events.on(AppEvents.ORDER_OPEN, () => {
+  appData.resetContacts();
+  appData.resetFormErrors();
+
   modal.render({
     content: deliveryForm.render({
       payment: 'card',
@@ -153,25 +148,25 @@ events.on(AppEvents.ORDER_SUBMIT, async () => {
   }
 });
 
-events.on(AppEvents.CONTACTS_SUBMIT, async () => {
-  try {
-    await presenter.submitOrder(appData.order);
-    const success = new Success(cloneTemplate(successTemplate), events, {
-      onClick: () => {
-        modal.close();
-        appData.clearBasket();
-        page.counter = appData.countBasketItems();
-      },
+events.on(AppEvents.CONTACTS_SUBMIT, () => {
+  api.sendOrder(appData.order)
+    .then(() => {
+      const success = new Success(cloneTemplate(successTemplate), events, {
+        onClick: () => {
+          modal.close();
+        },
+      });
+      modal.render({
+        content: success.render({
+          total: appData.calculateTotal(),
+        }),
+      });
+      appData.clearBasket();
+      page.counter = appData.countBasketItems();
+    })
+    .catch((error) => {
+      console.error('Ошибка при отправке заказа:', error);
     });
-
-    modal.render({
-      content: success.render({
-        total: appData.calculateTotal(),
-      }),
-    });
-  } catch (error) {
-    console.error('Ошибка при отправке заказа:', error);
-  }
 });
 
 events.on(AppEvents.MODAL_OPEN, () => {
@@ -182,4 +177,8 @@ events.on(AppEvents.MODAL_CLOSE, () => {
   page.locked = false;
 });
 
-presenter.loadProducts();
+api.getProductItems()
+  .then(appData.setCatalog.bind(appData))
+  .catch(err => {
+    console.error(err);
+});

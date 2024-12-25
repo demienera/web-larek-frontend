@@ -90,7 +90,24 @@ export class AppData extends Model<IAppData> {
       items: [],
       total: 0,
     };
-    this.emitChanges(AppEvents.ORDER_RESET, {});
+    this.emitChanges(AppEvents.ORDER_UPDATED, { order: this.order })
+  }
+
+  resetContacts(): void {
+    this.order = {
+      email: '',
+      phone: '',
+      payment: 'card',
+      address: '',
+      items: this.order.items,
+      total: this.order.total,
+    };
+    this.emitChanges(AppEvents.ORDER_UPDATED, { order: this.order })
+  }
+
+  resetFormErrors(): void {
+    this.formErrors = {};
+    this.events.emit(AppEvents.VALIDATE_FIELDS, this.formErrors);
   }
 
   setOrderField(field: keyof IOrder, value: string) {
@@ -125,9 +142,9 @@ export class AppData extends Model<IAppData> {
 
   validateOrder() {
     const errors: Partial<FormErrors> = {};
-    const addressRegex = /^[a-zA-Zа-яА-Я0-9\s,.-]{10,200}$/;
+    const addressRegex = /^[a-zA-Zа-яА-Я0-9\s,.-]{5,100}$/;
 
-    this.validateFieldWithRegex('address', this.order.address, addressRegex, 'введите корректный адрес доставки, не менее 10 символов');
+    this.validateFieldWithRegex('address', this.order.address, addressRegex, 'введите корректный адрес доставки (не менее 5 символов)');
     this.validateField('payment', this.order.payment, 'выберите способ оплаты');
 
     Object.assign(errors, this.formErrors);
@@ -142,7 +159,7 @@ export class AppData extends Model<IAppData> {
     const phoneRegex = /^\+7\s\(\d{3}\)\s\d{3}\s\d{2}\s\d{2}$/;
     const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
 
-    this.validateFieldWithRegex('phone', this.order.phone, phoneRegex, 'введите корректный номер телефона (формат: +7 (999) 999 99 99)');
+    this.validateFieldWithRegex('phone', this.order.phone, phoneRegex, 'введите корректный номер телефона');
     this.validateFieldWithRegex('email', this.order.email, emailRegex, 'введите корректный адрес почты');
 
     Object.assign(errors, this.formErrors);
@@ -153,7 +170,7 @@ export class AppData extends Model<IAppData> {
   }
 
   private validateFieldWithRegex(field: keyof FormErrors, value: string | undefined, regex: RegExp, errorMessage: string): void {
-    const error = !value ? 'введите значение' : !regex.test(value) ? errorMessage : '';
+    const error = !regex.test(value) ? errorMessage : '';
     this.validateFieldError(field, error);
   }
 

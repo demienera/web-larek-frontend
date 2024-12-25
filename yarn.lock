@@ -1081,6 +1081,11 @@
   dependencies:
     "@types/node" "*"
 
+"@types/inputmask@^5.0.7":
+  version "5.0.7"
+  resolved "http://npm.prakticum-team.ru/@types/inputmask/-/inputmask-5.0.7.tgz"
+  integrity sha512-uojbVPWzBQ/n/0jc/d16fLqmGasFIptbrLD2WrCPWArlk+5PgblOqH4EDkI3AoobXLAlOK5yF01V8jMmvMG5qg==
+
 "@types/json-schema@*", "@types/json-schema@^7.0.8", "@types/json-schema@^7.0.9":
   version "7.0.11"
 
@@ -2765,6 +2770,11 @@ inherits@^2.0.1, inherits@^2.0.3, inherits@^2.0.4, inherits@~2.0.3, inherits@2, 
 
 inherits@2.0.3:
   version "2.0.3"
+
+inputmask@^5.0.9:
+  version "5.0.9"
+  resolved "http://npm.prakticum-team.ru/inputmask/-/inputmask-5.0.9.tgz"
+  integrity sha512-s0lUfqcEbel+EQXtehXqwCJGShutgieOaIImFKC/r4reYNvX3foyrChl6LOEvaEgxEbesePIrw1Zi2jhZaDZbQ==
 
 inquirer@^8.0.0:
   version "8.2.5"
