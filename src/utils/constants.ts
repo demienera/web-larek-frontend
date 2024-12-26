@@ -7,6 +7,7 @@ import { DeliveryForm } from '../components/view/DeliveryForm';
 import { Modal } from '../components/view/Modal';
 import { Page } from '../components/view/Page';
 import { cloneTemplate, ensureElement } from './utils';
+import Inputmask from 'inputmask';
 
 export const API_URL = `${process.env.API_ORIGIN}/api/weblarek`;
 export const CDN_URL = `${process.env.API_ORIGIN}/content/weblarek`;
@@ -14,6 +15,7 @@ export const CDN_URL = `${process.env.API_ORIGIN}/content/weblarek`;
 export const api = new ProductApi(CDN_URL, API_URL);
 export const events = new EventEmitter();
 export const appData = new AppData({}, events);
+export const phoneMask = new Inputmask('+7 (999) 999 99 99');
 
 export const catalogTemplate = ensureElement<HTMLTemplateElement>('#card-catalog');
 export const productPreviewTemplate = ensureElement<HTMLTemplateElement>('#card-preview');

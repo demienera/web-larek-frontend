@@ -1,7 +1,7 @@
+import { phoneMask } from '../../utils/constants';
 import { IEvents } from '../base/events';
 import { IContactsForm } from './../../types/index';
 import { Form } from './Form';
-import Inputmask from 'inputmask';
 
 export class ContactsForm extends Form<IContactsForm> {
   constructor(container: HTMLFormElement, events: IEvents) {
@@ -16,7 +16,7 @@ export class ContactsForm extends Form<IContactsForm> {
     const phoneInput = this.getInputItem('phone');
     if (phoneInput) {
       phoneInput.value = value;
-      this.initMask(phoneInput);
+      phoneMask.mask(phoneInput);
     }
   }
 
@@ -24,18 +24,6 @@ export class ContactsForm extends Form<IContactsForm> {
     const emailInput = this.getInputItem('email');
     if (emailInput) {
       emailInput.value = value;
-    }
-  }
-
-  private initMask(phoneInput: HTMLInputElement) {
-    const mask = new Inputmask('+7 (999) 999 99 99');
-    mask.mask(phoneInput);
-  }
-
-  mask() {
-    const phoneInput = this.getInputItem('phone');
-    if (phoneInput) {
-      this.initMask(phoneInput);
     }
   }
 }

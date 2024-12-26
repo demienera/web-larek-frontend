@@ -159,8 +159,8 @@ export class AppData extends Model<IAppData> {
     const phoneRegex = /^\+7\s\(\d{3}\)\s\d{3}\s\d{2}\s\d{2}$/;
     const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
 
-    this.validateFieldWithRegex('phone', this.order.phone, phoneRegex, 'введите корректный номер телефона');
-    this.validateFieldWithRegex('email', this.order.email, emailRegex, 'введите корректный адрес почты');
+    this.validateFieldWithRegex('email', this.order.email, emailRegex, 'введите корректный адрес почты', 'введите адрес почты');
+    this.validateFieldWithRegex('phone', this.order.phone, phoneRegex, 'введите корректный номер телефона', 'введите номер телефона');
 
     Object.assign(errors, this.formErrors);
 
@@ -169,8 +169,12 @@ export class AppData extends Model<IAppData> {
     return Object.keys(errors).length === 0;
   }
 
-  private validateFieldWithRegex(field: keyof FormErrors, value: string | undefined, regex: RegExp, errorMessage: string): void {
-    const error = !regex.test(value) ? errorMessage : '';
+  private validateFieldWithRegex(field: keyof FormErrors, value: string | undefined, regex: RegExp, errorMessage: string, emptyMessage?: string): void {
+    const error = !value
+        ? emptyMessage || errorMessage
+        : !regex.test(value)
+        ? errorMessage
+        : '';
     this.validateFieldError(field, error);
   }
 
